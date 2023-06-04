@@ -1,0 +1,9 @@
+## R specific files
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+## large files from save_list
+MimiGIVE/output/save_list/**/*.csv
+MimiIWG/output/mcs/**/*.csv
