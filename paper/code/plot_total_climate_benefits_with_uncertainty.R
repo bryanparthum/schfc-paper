@@ -8,6 +8,10 @@ gc()
 
 ## this function will check if a package is installed, and if not, install it
 list.of.packages <- c("magrittr", "tidyverse",
+                      'data.table',
+                      'readxl',
+                      'FreqProf',
+                      'reshape2',
                       "ggplot2", "showtext")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages, repos = "http://cran.rstudio.com/")
@@ -24,15 +28,83 @@ showtext_auto()
 ## colorblind friendly palette from http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/
 colors = c("#000000", "#56B4E9", "#E69F00", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#999999")
 
+## function to summarize scghgs
+summarise_scghg <- function(x) {
+  x %>%
+    group_by(model, gas, discount.rate, emissions.year) %>%
+    summarise(mean = mean(scghg),
+              q05  = quantile(scghg, .05),
+              q95  = quantile(scghg, .95),
+              .groups = 'drop')
+}
+
+## function to prepare mimiiwg scghg
+read_iwg <- function(x) {
+  filename = basename(x)
+  read_parquet(x) %>%
+    mutate(gas   = stri_split(stri_split(filename, fixed = '-')[[1]][2],  fixed = '_')[[1]][1],
+           model = 'MimiIWG') %>% 
+    group_by(discount.rate, trial, emissions.year, gas, model) %>% 
+    summarise(scghg = mean(scghg), 
+              .groups = 'drop')
+}
+
+## function to prepare mimigive schfcs
+read_give <- function(x) {
+  filename = basename(x)
+  read_parquet(x) %>% 
+    rename(discount.rate = discount_rate) %>%
+    mutate(gas   = case_when(stri_split(filename, fixed = '-')[[1]][2] == 'HFC43_10' ~ 'HFC4310mee',
+                             T ~ stri_split(filename, fixed = '-')[[1]][2]),
+           emissions.year = as.numeric(stri_split(filename, fixed = '-')[[1]][4]),
+           model = 'MimiGIVE') %>% 
+    select(-sector)
+}
+
 ##########################
 ##################### data
 ##########################
 
-## read in scghg data
-scghgs =
-  rbind(read_csv("../MimiGIVE/output/scghg_annual.csv", show_col_types = F), 
-        read_csv("../MimiIWG/output/scghg_annual.csv", show_col_types = F)) %>% 
-  filter(gas != 'CO2')
+## combine 
+data = 
+  bind_rows(
+    list.files('../MimiIWG/output/scghgs/full_distributions', pattern = '.parquet', full.names = T) %>% 
+      map_df(~read_iwg(.)),
+    list.files('../MimiGIVE/output/scghgs/full_distributions', pattern = ".parquet", full.names = T) %>%
+      map_df(~read_give(.))
+  ) %>% 
+  filter(gas != 'CO2') 
+
+## blank canvas 
+data2 = tibble()
+
+## bootstrap to get confidence intervals
+set.seed(42)
+for (i in 1:50) {
+  print(paste0('boot ', i))
+  data2 = 
+    bind_rows(
+      data2,
+      data %>% 
+        group_by(discount.rate, emissions.year, gas, model) %>% 
+        slice_sample(n = 1000) %>% 
+        summarise(scghg = mean(scghg), 
+                  .groups = 'drop') %>% 
+        mutate(trial = i)
+    )
+}
+
+## get intervals
+data =
+  summarise_scghg(data2)
+  
+## linearly interpolate between emissions years
+data %<>% 
+  group_by(model, gas, discount.rate) %>% 
+  complete(emissions.year = seq(first(emissions.year), last(emissions.year))) %>%
+  mutate(mean = round(zoo::na.approx(mean)),
+         q05  = round(zoo::na.approx(q05)),
+         q95  = round(zoo::na.approx(q95)))
 
 ##########################
 #### purohit et al. (2020)
@@ -88,34 +160,40 @@ subset_and_clean <- function(all_gases, gwp = gwps_ar5) {
   
 }
 
-ssp3_baseline_hfcs_only <- subset_and_clean(ssp3_baseline_all_gases)
+ssp3_baseline_hfcs_only      <- subset_and_clean(ssp3_baseline_all_gases)
 ssp3_KA_reductions_hfcs_only <- subset_and_clean(ssp3_KA_reductions_all_gases)
-ssp3_mtfr_hfcs_only <- subset_and_clean(ssp3_mtfr_all_gases)
+ssp3_mtfr_hfcs_only          <- subset_and_clean(ssp3_mtfr_all_gases)
 
 ##########################
 ######### climate benefits
 ##########################
 
 ## function to get annual reductions
-get_benefits_summary <- function(data, ka_group = "Global") {
-  data %>%
+get_benefits_summary <- function(df, ka_group = "Global") {
+  df %>%
     filter(KA_group == ka_group) %>%
-    merge(scghgs, by.x = c("gas", "year"), by.y = c("gas", "emissions.year")) %>%
+    merge(data, by.x = c("gas", "year"), by.y = c("gas", "emissions.year")) %>%
     group_by(discount.rate) %>%
-    mutate(benefit = -value * scghg / 10^9) %>% # convert from kt to t, dollars to trillions
+    mutate(mean.benefit = -value * mean / 10^9,
+           q05.benefit  = -value * q05 / 10^9,
+           q95.benefit  = -value * q95 / 10^9) %>% # convert from kt to t, dollars to trillions
     ungroup
 }
 
 ## function to calculate total discounted climate benefits
-get_discounted_benefits <- function(data, base_year, group = "Global") {
-  data %>%
+get_discounted_benefits <- function(df, base_year, group = "Global") {
+  df %>%
     filter(KA_group == group, year >= base_year) %>%
-    merge(scghgs, by.x = c("gas", "year"), by.y = c("gas", "emissions.year")) %>%
+    merge(data, by.x = c("gas", "year"), by.y = c("gas", "emissions.year")) %>%
     mutate(discount_rate = 0.01*as.numeric(str_extract(discount.rate, "((\\b100)|(\\b[0-9]{1})\\.?[0-9]?)(?=%| *percent)")),
            discount_factor = 1/((1+discount_rate)^(year-base_year)), 
-           discounted_benefit = (-value * 1000 * scghg) / 10^12 * discount_factor) %>% # convert from kt to t, dollars to trillions
-    group_by(discount.rate, damage.function) %>%
-    summarize(total_discounted_benefit = sum(discounted_benefit))
+           discounted_benefit_mean = (-value * 1000 * mean) / 10^12 * discount_factor,
+           discounted_benefit_q05  = (-value * 1000 * q05) / 10^12 * discount_factor,
+           discounted_benefit_q95  = (-value * 1000 * q95) / 10^12 * discount_factor) %>% # convert from kt to t, dollars to trillions
+    group_by(discount.rate, model) %>%
+    summarize(total_discounted_benefit_mean = round(sum(discounted_benefit_mean), 2),
+              total_discounted_benefit_q05  = round(sum(discounted_benefit_q05, 2)),
+              total_discounted_benefit_q95  = round(sum(discounted_benefit_q95, 2)))
 }
 
 # comparison of annual benefits, MimiIWG 3% v.s. MimiGIVE 2%, KA
@@ -135,6 +213,10 @@ total_benefits <- rbind(total_benefits_KA %>%
                           filter(discount.rate == "2.0% Ramsey" | discount.rate == "3%") %>%
                           mutate(schedule = "B) Maximum Technologically \nFeasible Reduction"))
 
+## write total benefits for easy reference
+total_benefits %>% 
+  write_csv('output/tables/total_benefits.csv')
+
 ##########################
 ##################### plot
 ##########################
@@ -142,18 +224,27 @@ total_benefits <- rbind(total_benefits_KA %>%
 total_benefits %>% 
   ggplot() + 
   facet_wrap(~schedule, scales = "free_x") + 
-  geom_bar(aes(x    = factor(damage.function, levels = c("MimiGIVE", "MimiIWG")), 
-               y    = total_discounted_benefit, 
+  geom_bar(aes(x    = factor(model, levels = c("MimiGIVE", "MimiIWG")), 
+               y    = total_discounted_benefit_mean, 
                fill = schedule),
            alpha = 0.8,
            stat     = "identity", 
            position = "dodge") +
-  geom_text(aes(x      = factor(damage.function, levels = c("MimiGIVE", "MimiIWG")), 
-                y      = total_discounted_benefit, 
-                label  = paste0('$', round(total_discounted_benefit, 2), ' T')),
+  geom_errorbar(aes(x    = factor(model, levels = c("MimiGIVE", "MimiIWG")),
+                    ymin      = total_discounted_benefit_q05,
+                    ymax      = total_discounted_benefit_q95),
+                color    = 'grey40',
+                linetype = 'dashed',
+                width    = 0.2,
+                alpha    = 0.8,
+                stat     = "identity",
+                position = "dodge") +
+  geom_text(aes(x      = factor(model, levels = c("MimiGIVE", "MimiIWG")), 
+                y      = total_discounted_benefit_mean, 
+                label  = paste0('$', round(total_discounted_benefit_mean, 2), ' T')),
             family = "sans-serif", 
             color = 'grey20',
-            vjust = -0.2) +
+            vjust = -2) +
   scale_color_manual(values = c(colors[4], colors[3])) +
   scale_fill_manual(values = c(colors[4], colors[3])) +
   labs(x = '',
@@ -179,4 +270,4 @@ total_benefits %>%
     text             = element_text(family = "sans-serif", color = 'grey20'))
 
 ## export
-ggsave("output/figures/total_discounted_benefits.svg", width = 9, height = 6)
+ggsave("output/figures/total_discounted_benefits_with_uncertainty.svg", width = 9, height = 6)
