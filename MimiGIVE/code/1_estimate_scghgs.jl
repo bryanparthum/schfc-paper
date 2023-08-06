@@ -38,7 +38,8 @@ gases = [:HFC23, :HFC32, :HFC43_10, :HFC125, :HFC134a, :HFC143a, :HFC227ea, :HFC
 ## set named list of discount rates
 discount_rates = 
     [
-        (label = "2.0% Ramsey", prtp = exp(0.001972641)-1, eta  = 1.244459),
+        (label = "2.0% Ramsey", prtp = exp(0.001972641)-1, eta = 1.244459),
+        (label = "3.0% Ramsey", prtp = exp(0.007702710)-1, eta = 1.567899)
     ];
 
 ## GIVE results are in 2005 USD, this is the price deflator to bring the results to 2020 USD. accessed 10/19/2022. source: https://apps.bea.gov/iTable/iTable.cfm?reqid=19&step=3&isuri=1&select_all_years=0&nipa_table_list=13&series=a&first_year=2005&last_year=2020&scale=-99&categories=survey&thetable=
