@@ -38,7 +38,7 @@ models = [:dice, :fund, :page];
 gases = [:HFC23, :HFC32, :HFC125, :HFC134a, :HFC143a, :HFC152a, :HFC227ea, :HFC236fa, :HFC245fa, :HFC365mfc, :HFC4310mee, :CO2];
 
 ## set list of discount rates
-discount_rates = [0.03];
+discount_rates = [0.02, 0.03];
 
 ######################################
 ###################### set up parallel
