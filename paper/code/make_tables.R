@@ -23,7 +23,9 @@ data =
     read_csv('../MimiIWG/output/scghg_annual.csv', show_col_types = F)
   ) %>% 
   filter(gas != 'CO2') %>% 
-  mutate(scghg = scghg/1e3) %>% 
+  mutate(scghg         = scghg/1e3,
+         discount.rate = case_when(!(grepl("Ramsey", discount.rate)) ~ paste0(discount.rate, ' Constant Discount Rate'),
+                                   T ~ discount.rate)) %>% 
   rename(model = damage.function,
          year  = emissions.year)
 
@@ -34,7 +36,6 @@ data =
 ## decadal
 data %>% 
   filter(year %in% seq(2020, 2100, 10)) %>% 
-  select(-discount.rate) %>% 
   pivot_wider(names_from  = gas, 
               values_from = scghg) %>% 
   mutate_if(is.numeric, round) %>% 
@@ -43,7 +44,6 @@ data %>%
 
 ## annual
 data %>% 
-  select(-discount.rate) %>% 
   pivot_wider(names_from  = gas, 
               values_from = scghg) %>% 
   mutate_if(is.numeric, round) %>% 

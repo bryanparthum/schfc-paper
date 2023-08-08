@@ -53,14 +53,22 @@ colors = c("#000000", "#56B4E9", "#E69F00", "#009E73", "#F0E442", "#0072B2", "#D
 data = 
   left_join(
     bind_rows(
-      read_csv('../MimiIWG/output/scghg_annual.csv', show_col_types = FALSE) %>% filter(gas != 'CO2'),
-      read_csv('../MimiGIVE/output/scghg_annual.csv', show_col_types = FALSE) %>% filter(gas != 'CO2')
+      read_csv('../MimiIWG/output/scghg_annual.csv', show_col_types = FALSE) %>% 
+        filter(gas           != 'CO2',
+               discount.rate == '3%'),
+      read_csv('../MimiGIVE/output/scghg_annual.csv', show_col_types = FALSE) %>% 
+        filter(gas           != 'CO2',
+               discount.rate == '2.0% Ramsey')
     ) %>% 
       rename(schfc = scghg) %>% 
       rename(model = damage.function),
     bind_rows(
-      read_csv('../MimiIWG/output/scghg_annual.csv', show_col_types = FALSE) %>% filter(gas == 'CO2'),
-      read_csv('../MimiGIVE/output/scghg_annual.csv', show_col_types = FALSE) %>% filter(gas == 'CO2')
+      read_csv('../MimiIWG/output/scghg_annual.csv', show_col_types = FALSE) %>% 
+        filter(gas           == 'CO2',
+               discount.rate == '3%'),
+      read_csv('../MimiGIVE/output/scghg_annual.csv', show_col_types = FALSE) %>% 
+        filter(gas           == 'CO2',
+               discount.rate == '2.0% Ramsey')
     ) %>% 
       rename(scco2 = scghg) %>% 
       select(-gas) %>% 
