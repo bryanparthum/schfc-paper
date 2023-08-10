@@ -8,7 +8,8 @@ gc()
 
 ## this function will check if a package is installed, and if not, install it
 list.of.packages <- c("magrittr", "tidyverse",
-                      'data.table',
+                      'data.table','arrow',
+                      'stringi',
                       'readxl',
                       'FreqProf',
                       'reshape2',
@@ -42,6 +43,7 @@ summarise_scghg <- function(x) {
 read_iwg <- function(x) {
   filename = basename(x)
   read_parquet(x) %>%
+    # filter(discount.rate %in% c('3%')) %>% 
     mutate(gas   = stri_split(stri_split(filename, fixed = '-')[[1]][2],  fixed = '_')[[1]][1],
            model = 'MimiIWG') %>% 
     group_by(discount.rate, trial, emissions.year, gas, model) %>% 
@@ -52,8 +54,9 @@ read_iwg <- function(x) {
 ## function to prepare mimigive schfcs
 read_give <- function(x) {
   filename = basename(x)
-  read_parquet(x) %>% 
+  read_parquet(x) %>%
     rename(discount.rate = discount_rate) %>%
+    # filter(discount.rate %in% c('2.0% Ramsey')) %>%  
     mutate(gas   = case_when(stri_split(filename, fixed = '-')[[1]][2] == 'HFC43_10' ~ 'HFC4310mee',
                              T ~ stri_split(filename, fixed = '-')[[1]][2]),
            emissions.year = as.numeric(stri_split(filename, fixed = '-')[[1]][4]),
@@ -189,11 +192,11 @@ get_discounted_benefits <- function(df, base_year, group = "Global") {
            discount_factor = 1/((1+discount_rate)^(year-base_year)), 
            discounted_benefit_mean = (-value * 1000 * mean) / 10^12 * discount_factor,
            discounted_benefit_q05  = (-value * 1000 * q05) / 10^12 * discount_factor,
-           discounted_benefit_q95  = (-value * 1000 * q95) / 10^12 * discount_factor) %>% # convert from kt to t, dollars to trillions
+           discounted_benefit_q95  = (-value * 1000 * q95) / 10^12 * discount_factor) %>% # convert from t to kt, dollars to trillions
     group_by(discount.rate, model) %>%
     summarize(total_discounted_benefit_mean = round(sum(discounted_benefit_mean), 2),
-              total_discounted_benefit_q05  = round(sum(discounted_benefit_q05, 2)),
-              total_discounted_benefit_q95  = round(sum(discounted_benefit_q95, 2)))
+              total_discounted_benefit_q05  = round(sum(discounted_benefit_q05), 2),
+              total_discounted_benefit_q95  = round(sum(discounted_benefit_q95), 2))
 }
 
 # comparison of annual benefits, MimiIWG 3% v.s. MimiGIVE 2%, KA
@@ -207,10 +210,8 @@ total_benefits_mtfr <- get_discounted_benefits(ssp3_mtfr_hfcs_only, base_year = 
 
 # compare
 total_benefits <- rbind(total_benefits_KA %>% 
-                          filter(discount.rate == "2.0% Ramsey" | discount.rate == "3%") %>%
                           mutate(schedule = "A) Kigali Amendment"),
                         total_benefits_mtfr %>% 
-                          filter(discount.rate == "2.0% Ramsey" | discount.rate == "3%") %>%
                           mutate(schedule = "B) Maximum Technologically \nFeasible Reduction"))
 
 ## write total benefits for easy reference
@@ -222,6 +223,7 @@ total_benefits %>%
 ##########################
 
 total_benefits %>% 
+  filter(discount.rate %in% c('2.0% Ramsey', '3%')) %>% 
   ggplot() + 
   facet_wrap(~schedule, scales = "free_x") + 
   geom_bar(aes(x    = factor(model, levels = c("MimiGIVE", "MimiIWG")), 
@@ -236,9 +238,7 @@ total_benefits %>%
                 color    = 'grey40',
                 linetype = 'dashed',
                 width    = 0.2,
-                alpha    = 0.8,
-                stat     = "identity",
-                position = "dodge") +
+                alpha    = 0.8) +
   geom_text(aes(x      = factor(model, levels = c("MimiGIVE", "MimiIWG")), 
                 y      = total_discounted_benefit_mean, 
                 label  = paste0('$', round(total_discounted_benefit_mean, 2), ' T')),

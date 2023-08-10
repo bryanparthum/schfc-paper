@@ -1,7 +1,13 @@
 discount.rate,model,total_discounted_benefit_mean,total_discounted_benefit_q05,total_discounted_benefit_q95,schedule
-2.0% Ramsey,MimiGIVE,37.12,38,40,A) Kigali Amendment
-3%,MimiIWG,16.14,17,19,A) Kigali Amendment
-2.0% Ramsey,MimiGIVE,41.17,42,44,"B) Maximum Technologically 
+2%,MimiIWG,38.06,36.32,39.81,A) Kigali Amendment
+2.0% Ramsey,MimiGIVE,37.14,35.93,38.31,A) Kigali Amendment
+3%,MimiIWG,16.13,15.24,17.06,A) Kigali Amendment
+3.0% Ramsey,MimiGIVE,17.58,16.91,18.29,A) Kigali Amendment
+2%,MimiIWG,42.18,40.25,44.13,"B) Maximum Technologically 
 Feasible Reduction"
-3%,MimiIWG,18.09,19,21,"B) Maximum Technologically 
+2.0% Ramsey,MimiGIVE,41.19,39.86,42.5,"B) Maximum Technologically 
+Feasible Reduction"
+3%,MimiIWG,18.08,17.08,19.11,"B) Maximum Technologically 
+Feasible Reduction"
+3.0% Ramsey,MimiGIVE,19.81,19.06,20.61,"B) Maximum Technologically 
 Feasible Reduction"
