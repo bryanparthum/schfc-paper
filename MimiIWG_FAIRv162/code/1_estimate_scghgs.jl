@@ -15,7 +15,7 @@ Pkg.activate(joinpath(@__DIR__, ".."));
 Pkg.instantiate();
 
 ## precompile and add packages to the namespace
-using Random, Mimi, MimiIWG_FAIRv162
+using Random, Mimi, MimiIWG_FAIRv162, Distributed
 
 ## set random seed for monte carlo 
 seed = 42;
@@ -46,7 +46,7 @@ addprocs(55);
 ## distribute packages
 @everywhere using Pkg;
 @everywhere Pkg.activate(joinpath(@__DIR__, ".."));
-using Random, Mimi, Distributed, MimiIWG_FAIRv162
+@everywhere using Random, Mimi, Distributed, MimiIWG_FAIRv162
 
 ######################################
 ####################### estimate scghg
