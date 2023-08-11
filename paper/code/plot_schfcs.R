@@ -49,6 +49,7 @@ summarise_scghg <- function(x) {
 read_iwg <- function(x) {
   filename = basename(x)
   read_parquet(x) %>%
+    filter(discount.rate %in% c('3%')) %>% 
     mutate(gas   = stri_split(stri_split(filename, fixed = '-')[[1]][2],  fixed = '_')[[1]][1],
            scghg = case_when(stri_split(stri_split(filename, fixed = '-')[[1]][2],  fixed = '_')[[1]][1] != 'CO2' ~ scghg/1e3,
                              T ~ scghg),
@@ -60,6 +61,7 @@ read_give <- function(x) {
   filename = basename(x)
   read_parquet(x) %>% 
     rename(discount.rate = discount_rate) %>%
+    filter(discount.rate %in% c('2.0% Ramsey')) %>% 
     mutate(gas   = case_when(stri_split(filename, fixed = '-')[[1]][2] == 'HFC43_10' ~ 'HFC4310mee',
                              T ~ stri_split(filename, fixed = '-')[[1]][2]),
            emissions.year = as.numeric(stri_split(filename, fixed = '-')[[1]][4]),
@@ -85,28 +87,10 @@ data =
 
 ## arrange order
 data %<>% 
-  mutate(gas = fct_relevel(gas,'HFC23', 'HFC32', 'HFC125', 'HFC134a', 'HFC143a', 'HFC152a', 'HFC227ea', 'HFC236fa', 'HFC245fa', 'HFC365mfc', 'HFC4310mee', 'CO2'))
+  mutate(model = fct_relevel(model, 'MimiGIVE', 'MimiIWG'),
+         gas   = fct_relevel(gas,'HFC23', 'HFC32', 'HFC125', 'HFC134a', 'HFC143a', 'HFC152a', 'HFC227ea', 'HFC236fa', 'HFC245fa', 'HFC365mfc', 'HFC4310mee', 'CO2'))
 
-## label CO2 as not in thousands
-## get maths in label for CO2
-facet_names = c(`1` = 'HFC23', 
-                `2` = 'HFC32', 
-                `3` = 'HFC125', 
-                `4` = 'HFC134a', 
-                `5` = 'HFC143a', 
-                `6` = 'HFC152a', 
-                `7` = 'HFC227ea', 
-                `8` = 'HFC236fa', 
-                `9` = 'HFC245fa', 
-                `10` = 'HFC365mfc', 
-                `11` = 'HFC4310mee', 
-                `12` = expression(CO[2], ' (2020USD)'))
-
-data %<>% 
-  mutate_at(.vars = 'gas', 
-            .funs = factor, 
-            labels = facet_names)
-
+## specify labels
 data$gas <- factor(data$gas,
                    labels = c('HFC23', 'HFC32', 'HFC125', 'HFC134a', 'HFC143a', 'HFC152a', 'HFC227ea', 'HFC236fa', 'HFC245fa', 'HFC365mfc', 'HFC4310mee', expression(paste(CO[2], '  (2020USD)'))))
 

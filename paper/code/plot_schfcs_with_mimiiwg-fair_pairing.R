@@ -49,10 +49,23 @@ summarise_scghg <- function(x) {
 read_iwg <- function(x) {
   filename = basename(x)
   read_parquet(x) %>%
+    filter(discount.rate %in% c('3%')) %>% 
     mutate(gas   = stri_split(stri_split(filename, fixed = '-')[[1]][2],  fixed = '_')[[1]][1],
            scghg = case_when(stri_split(stri_split(filename, fixed = '-')[[1]][2],  fixed = '_')[[1]][1] != 'CO2' ~ scghg/1e3,
                              T ~ scghg),
            model = 'MimiIWG')
+}
+
+## function to prepare mimiiwg scghg
+read_iwg_fair <- function(x) {
+  filename = basename(x)
+  read_parquet(x) %>%
+    filter(discount.rate %in% c('3%')) %>% 
+    mutate(gas   = case_when(stri_split(stri_split(filename, fixed = '-')[[1]][2],  fixed = '_')[[1]][1] == 'HFC43' ~ 'HFC4310mee',
+                             T ~ stri_split(stri_split(filename, fixed = '-')[[1]][2],  fixed = '_')[[1]][1]),
+           scghg = case_when(stri_split(stri_split(filename, fixed = '-')[[1]][2],  fixed = '_')[[1]][1] != 'CO2' ~ scghg/1e3,
+                             T ~ scghg),
+           model = 'MimiIWG-FaIR')
 }
 
 ## function to prepare mimigive schfcs
@@ -60,6 +73,7 @@ read_give <- function(x) {
   filename = basename(x)
   read_parquet(x) %>% 
     rename(discount.rate = discount_rate) %>%
+    filter(discount.rate %in% c('2.0% Ramsey')) %>% 
     mutate(gas   = case_when(stri_split(filename, fixed = '-')[[1]][2] == 'HFC43_10' ~ 'HFC4310mee',
                              T ~ stri_split(filename, fixed = '-')[[1]][2]),
            emissions.year = as.numeric(stri_split(filename, fixed = '-')[[1]][4]),
@@ -78,6 +92,9 @@ data =
     list.files('../MimiIWG/output/scghgs/full_distributions', pattern = '.parquet', full.names = T) %>% 
       map_df(~read_iwg(.)) %>% 
       summarise_scghg, 
+    list.files('../MimiIWG_FaIRv162/output/scghgs/full_distributions', pattern = '.parquet', full.names = T) %>% 
+      map_df(~read_iwg_fair(.)) %>% 
+      summarise_scghg,
     list.files('../MimiGIVE/output/scghgs/full_distributions', pattern = ".parquet", full.names = T) %>%
       map_df(~read_give(.)) %>% 
       summarise_scghg 
@@ -85,28 +102,10 @@ data =
 
 ## arrange order
 data %<>% 
-  mutate(gas = fct_relevel(gas,'HFC23', 'HFC32', 'HFC125', 'HFC134a', 'HFC143a', 'HFC152a', 'HFC227ea', 'HFC236fa', 'HFC245fa', 'HFC365mfc', 'HFC4310mee', 'CO2'))
+  mutate(model = fct_relevel(model, 'MimiGIVE', 'MimiIWG-PAGE', 'MimiIWG-DICE', 'MimiIWG-FUND'),
+         gas   = fct_relevel(gas,'HFC23', 'HFC32', 'HFC125', 'HFC134a', 'HFC143a', 'HFC152a', 'HFC227ea', 'HFC236fa', 'HFC245fa', 'HFC365mfc', 'HFC4310mee', 'CO2'))
 
-## label CO2 as not in thousands
-## get maths in label for CO2
-facet_names = c(`1` = 'HFC23', 
-                `2` = 'HFC32', 
-                `3` = 'HFC125', 
-                `4` = 'HFC134a', 
-                `5` = 'HFC143a', 
-                `6` = 'HFC152a', 
-                `7` = 'HFC227ea', 
-                `8` = 'HFC236fa', 
-                `9` = 'HFC245fa', 
-                `10` = 'HFC365mfc', 
-                `11` = 'HFC4310mee', 
-                `12` = expression(CO[2], ' (2020USD)'))
-
-data %<>% 
-  mutate_at(.vars = 'gas', 
-            .funs = factor, 
-            labels = facet_names)
-
+## specify labels
 data$gas <- factor(data$gas,
                    labels = c('HFC23', 'HFC32', 'HFC125', 'HFC134a', 'HFC143a', 'HFC152a', 'HFC227ea', 'HFC236fa', 'HFC245fa', 'HFC365mfc', 'HFC4310mee', expression(paste(CO[2], '  (2020USD)'))))
 
@@ -116,7 +115,10 @@ data$gas <- factor(data$gas,
 
 data %>% 
   ggplot() +
-  facet_wrap(~gas, scales = 'free', ncol = 3, labeller = label_parsed) +
+  facet_wrap(~gas, 
+             scales = 'free', 
+             ncol = 3, 
+             labeller = label_parsed) +
   geom_line(aes(x        = emissions.year, 
                 y        = mean, 
                 color    = model,
@@ -133,8 +135,8 @@ data %>%
                      limits = c(2020, 2100),
                      labels = c(2020, '', '', '', 2060, '', '', '', 2100)) +
   scale_y_continuous(breaks = pretty_breaks(n = 5)) +
-  scale_color_manual(values = c(colors[4], colors[3])) +
-  scale_fill_manual(values = c(colors[4], colors[3])) +
+  scale_color_manual(values = c(colors[4], colors[3], colors[7])) +
+  scale_fill_manual(values = c(colors[4], colors[3], colors[7])) +
   labs(x        = "Emissions Year",
        y        = 'The Social Cost of Hydrofluorocarbons \n(SC-HFCs are in thousands, 2020USD per tonne)',
        color    = '',
@@ -161,4 +163,4 @@ data %>%
     text             = element_text(family = "sans-serif", color = 'grey20'))
 
 ## export
-ggsave('output/figures/schfcs.svg', width = 9, height = 11)
+ggsave('output/figures/schfcs_with_mimiiwg-fair_pairing.svg', width = 9, height = 11)
