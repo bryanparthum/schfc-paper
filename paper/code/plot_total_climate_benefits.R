@@ -7,8 +7,8 @@ rm(list = ls())
 gc()
 
 ## this function will check if a package is installed, and if not, install it
-list.of.packages <- c("magrittr", "tidyverse", "reshape2",
-                      "ggplot2", "showtext", "readxl", "FreqProf", "data.table")
+list.of.packages <- c("magrittr", "tidyverse", "reshape2", "ggplot2", 
+                      "showtext", "readxl", "FreqProf", "data.table")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages, repos = "http://cran.rstudio.com/")
 lapply(list.of.packages, library, character.only = TRUE)
@@ -134,6 +134,20 @@ total_benefits <- rbind(total_benefits_KA %>%
                         total_benefits_mtfr %>% 
                           filter(discount.rate == "2.0% Ramsey" | discount.rate == "3%") %>%
                           mutate(schedule = "B) Maximum Technologically \nFeasible Reduction"))
+
+##########################
+###### cumulative benefits
+##########################
+
+## mimiGIVE, 2% ramsey
+cumulative_benefits_give <- global_summary %>%
+                              filter(discount.rate == "2.0% Ramsey" & damage.function == "MimiGIVE" & KA_group == "Global") %>%
+                              summarize(total_benefits = sum(benefit)) # 96.2 trillion
+
+## mimiIWG, 3% constant
+cumulative_benefits_iwg <- global_summary %>%
+                              filter(discount.rate == "3%" & damage.function == "MimiIWG" & KA_group == "Global") %>%
+                              summarize(total_benefits = sum(benefit)) # 68.8 trillion
 
 ##########################
 ##################### plot
