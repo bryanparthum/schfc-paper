@@ -1,4 +1,5 @@
 [deps]
+DataDeps = "124859b0-ceae-595e-8997-d05f6a7a8dfe"
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 Mimi = "e4e893b0-ee5e-52ea-8111-44b3bdec128c"
 MimiIWG_FAIRv162 = "4ed45b26-778f-11ee-1a7e-43a2532b2fa8"

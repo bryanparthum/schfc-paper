@@ -7,6 +7,7 @@
 ############################  preamble
 ######################################
 
+## automatically get data dependancies "mimiiwg_fairv162_paths"
 ENV["DATADEPS_ALWAYS_ACCEPT"] = "true"
 MimiIWG_FAIRv162.datadep"mimiiwg_fairv162_paths"
 
