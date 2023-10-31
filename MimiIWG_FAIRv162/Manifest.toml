@@ -507,8 +507,8 @@ uuid = "b3ba11de-429f-11e9-29f7-cb478ab96e7c"
 version = "3.8.6"
 
 [[deps.MimiIWG_FAIRv162]]
-deps = ["Arrow", "CSVFiles", "DataFrames", "Dates", "DelimitedFiles", "Distributions", "Interpolations", "Mimi", "MimiDICE2010", "MimiFUND", "MimiPAGE2009", "Query", "Statistics", "StatsBase", "XLSX"]
-git-tree-sha1 = "572416d2253855ef522fef0c77ad67b7c454098e"
+deps = ["Arrow", "CSVFiles", "DataDeps", "DataFrames", "Dates", "DelimitedFiles", "Distributions", "Interpolations", "Mimi", "MimiDICE2010", "MimiFUND", "MimiPAGE2009", "Query", "Statistics", "StatsBase", "XLSX"]
+git-tree-sha1 = "4407297cb813b1ae7430197e0cbcb61efea305a6"
 repo-rev = "main"
 repo-url = "https://github.com/lrennels/MimiIWG_FAIRv162.git"
 uuid = "4ed45b26-778f-11ee-1a7e-43a2532b2fa8"
