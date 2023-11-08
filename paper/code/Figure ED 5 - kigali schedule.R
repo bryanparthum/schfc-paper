@@ -59,16 +59,17 @@ phasedown_sched %>%
   scale_x_continuous(n.breaks = 8) +
   scale_y_continuous(labels = scales::percent_format(),
                      n.breaks = 10) +
-  labs(x     = "Year",
-       y     = "Percentage of Baseline",
-       color = "Article 5 Grouping",
+  labs(x        = "Year",
+       y        = "Percentage of Baseline",
+       color    = "Article 5 Grouping",
        linetype = "Article 5 Grouping") +
   theme_minimal() +
-  theme(legend.position = c(.15, 0.2),
-        legend.title     = element_text(size = 16, color='grey20'),
-        legend.text      = element_text(size = 16, color='grey20'),
-        legend.key.size  = unit(1, 'cm'),
+  theme(legend.position = c(.16, 0.2),
+        legend.title     = element_text(size = 12, color='grey20'),
+        legend.text      = element_text(size = 12, color='grey20'),
+        legend.key.width = unit(1.5, 'cm'),
         legend.margin    = margin(0, 0, 0, 0),
+        legend.box.background = element_rect(fill = 'white', color = NA),
         axis.title       = element_text(size = 16),
         axis.text        = element_text(size = 16),
         axis.line.x      = element_line(color = "black"),
@@ -82,4 +83,9 @@ phasedown_sched %>%
         text             = element_text(family = "sans-serif", color = 'grey20'))
 
 ## export
-ggsave('output/figures/kigali_phasedown_schedule.svg', width = 9, height = 6)
+ggsave('output/figures/Extended Data Figure 5.pdf', 
+       width  = 180, 
+       height = 120,
+       units  = 'mm')
+
+## end of script, have a great day.

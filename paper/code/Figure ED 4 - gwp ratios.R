@@ -27,24 +27,6 @@ showtext_auto()
 ## colorblind friendly palette from http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/
 colors = c("#000000", "#56B4E9", "#E69F00", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#999999")
 
-# ## mimigive results are in 2005 USD, this is the price deflator to bring the results to 2020 USD. accessed 09/13/2022. source: https://apps.bea.gov/iTable/iTable.cfm?reqid=19&step=3&isuri=1&select_all_years=0&nipa_table_list=13&series=a&first_year=2005&last_year=2020&scale=-99&categories=survey&thetable=
-# pricelevel_2005_to_2020 = 113.648/87.504
-
-# ## function to prepare mimigive scco2
-# read_give_co2 <- function(x) {
-#   filename = basename(x)
-#   read_parquet(x) %>%
-#     rename(discount.rate = discount_rate,
-#            scco2         = scghg) %>%
-#     filter(discount.rate == '2.0% Ramsey',
-#            sector == 'total',
-#            region == 'globe') %>%
-#     select(scco2) %>% 
-#     summarize_all(mean) %>% 
-#     mutate(emissions.year = as.numeric(stri_split(filename, fixed = '-')[[1]][5]),
-#            scco2 = scco2 * pricelevel_2005_to_2020) 
-# }
-
 ##########################
 ##################### data
 ##########################
@@ -110,15 +92,17 @@ data %>%
                    y    = 1, 
                    yend = 1), 
                color     = 'grey20', 
-               linetype  = 'dotdash',
+               # linetype  = 'dotdash',
                linewidth = 0.5) +
   scale_x_continuous(breaks = seq(2020, 2070, 10),
                      limits = c(2020, 2070),
                      labels = c(2020, '', 2040, '', 2060, '')) +
-  scale_y_continuous(breaks = scales::pretty_breaks(n = 5)) +
+  scale_y_continuous(breaks = c(0, 0.5, 1, 1.5, 2, 2.5),
+                     labels = c(0, 0.5, 1, 1.5, 2, 2.5),
+                     limits = c(0,2.5)) +
   scale_color_manual(values = c(colors[4], colors[3])) +
   scale_fill_manual(values = c(colors[4], colors[3])) +
-  labs(x        = "Emissions Year",
+  labs(x        = 'Emissions Year',
        y        = 'Ratio of GWP-based Appriximation of the SC-HFC to the Direct Etimate SC-HFC',
        color    = '',
        linetype = '') +
@@ -133,15 +117,19 @@ data %>%
         axis.text        = element_text(size = 12),
         axis.line.x      = element_line(color = "black"),
         axis.ticks.x     = element_line(color = "black", size = 1),
-        strip.text       = element_text(color = 'grey20', size = 13, face = "bold"), 
+        strip.text       = element_text(color = 'grey20', size = 13, face = 'bold'), 
         panel.grid.major.x = element_blank(),
-        panel.grid.major.y = element_line(color = 'grey70', linetype = "dotted"),
+        panel.grid.major.y = element_line(color = 'grey70', linetype = 'dotted'),
         panel.grid.minor = element_blank(),
         plot.caption     = element_text(size = 12, hjust = 0.5),
         plot.title       = element_text(size = 12, hjust = 0.5),
-        text             = element_text(family = "sans-serif", color = 'grey20'))
+        plot.margin      = unit(c(t = 0, r = 0.5, b = 0, l = 0.5), 'cm'),
+        text             = element_text(family = 'sans-serif', color = 'grey20'))
 
 ## export
-ggsave('output/figures/gwp_ratio.svg', width = 9, height = 11)
+ggsave('output/figures/Extended Data Figure 4.pdf', 
+       width  = 180, 
+       height = 215,
+       units  = 'mm')
 
-## end of script, have a great day! 
+## end of script, have a great day.

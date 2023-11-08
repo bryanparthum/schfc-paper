@@ -125,7 +125,7 @@ projections %<>%
 ##########################
 
 projections %>% 
-ggplot() +
+  ggplot() +
   geom_line(aes(x = year, 
                 y = emissions, 
                 color = projection,
@@ -138,10 +138,11 @@ ggplot() +
        color = '',
        linetype = '') +
   theme_minimal() +
-  theme(legend.position = c(0.75, 0.5),
+  theme(legend.position = c(0.75, 0.53),
         legend.title     = element_text(size = 16, color='grey20'),
-        legend.text      = element_text(size = 16, color='grey20'),
-        legend.key.size  = unit(1, 'cm'),
+        legend.text      = element_text(size = 13, color='grey20'),
+        legend.key.width  = unit(2.5, 'cm'),
+        legend.key.height = unit(1, 'cm'),
         legend.margin    = margin(0, 0, 0, 0),
         axis.title       = element_text(size = 16),
         axis.text        = element_text(size = 16),
@@ -153,7 +154,12 @@ ggplot() +
         panel.grid.minor = element_blank(),
         plot.caption     = element_text(size = 12, hjust = 0.5),
         plot.title       = element_text(size = 12, hjust = 0.5),
-        text             = element_text(family = "sans-serif", color = 'grey20'))
+        text             = element_text(family = 'sans-serif', color = 'grey20'))
 
 ## export
-ggsave("output/figures/purohit_projections.svg", width = 9, height = 6)
+ggsave('output/figures/Extended Data Figure 6.pdf', 
+       width  = 180, 
+       height = 120,
+       units  = 'mm')
+
+## end of script, have a great day.

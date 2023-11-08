@@ -6,7 +6,7 @@
 rm(list = ls())
 gc()
 
-## This function will check if a package is installed, and if not, install it
+## this function will check if a package is installed, and if not, install it
 list.of.packages <- c('magrittr','tidyverse',
                       'stringi',
                       'arrow',
@@ -139,9 +139,6 @@ data =
       mutate(iam = 'MimiIWG')
   )
 
-# ## order
-# data$iam <- factor(data$iam, levels = c('MimiGIVE', 'MimiIWG'))
-
 ## arrange order
 data %<>% 
   mutate(iam = fct_relevel(iam, 'MimiGIVE', 'MimiIWG'),
@@ -179,10 +176,6 @@ data %>%
                      limits = c(1, 400),
                      expand = c(0, 0),
                      breaks = c(1, 10, 100, 300)) +
-  # scale_y_log10(
-  #   limits = c(1e-8, 1e-1),
-  #   breaks = scales::trans_breaks("log10", function(x) 10^x),
-  #   expand = c(0, 0)) +
   labs(x         = 'Years Since Emissions',
        y         = 'Excess Radiative Forcing from a 1 Megatonne Pulse in 2030',
        color     = '',
@@ -206,9 +199,13 @@ data %>%
         panel.grid.minor = element_blank(),
         plot.caption     = element_text(size = 12, hjust = 0.5),
         plot.title       = element_text(size = 12, hjust = 0.5),
+        plot.margin      = unit(c(t = 0, r = 0.5, b = 0, l = 0.5), 'cm'),
         text             = element_text(family = "sans-serif", color = 'grey20'))
 
 ## export
-ggsave('output/figures/forcing_anomaly.svg', width = 9, height = 11)
+ggsave('output/figures/Extended Data Figure 3.pdf', 
+       width  = 180, 
+       height = 215,
+       units  = 'mm')
 
 ## end of script, have a great day.

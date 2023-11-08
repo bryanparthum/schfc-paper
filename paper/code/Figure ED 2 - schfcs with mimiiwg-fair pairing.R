@@ -143,24 +143,28 @@ data %>%
        linetype = '') +
   theme_minimal() +
   theme(
-    # legend.position = c(0.93, 0.07),
     legend.position = 'bottom',
-    # legend.justification = c(1, 0),
     legend.title     = element_text(size = 14, color = 'grey20'),
-    legend.text      = element_text(size = 16, color = 'grey20'),
+    legend.text      = element_text(size = 12, color = 'grey20'),
     legend.key.size  = unit(1, 'cm'),
-    legend.margin    = margin(0, 0, 0, 0),
+    legend.margin    = margin(0, 40, 0, 0),
     axis.title       = element_text(size = 12),
     axis.text        = element_text(size = 12),
     axis.line.x      = element_line(color = "black"),
     axis.ticks.x     = element_line(color = "black", size = 1),
-    strip.text.x     = element_text(size = 13, face = "bold", family = "sans-serif", color = 'grey20'), 
+    strip.text.x     = element_text(size = 13, face = 'bold', family = 'sans-serif', color = 'grey20'), 
     panel.grid.major.x = element_blank(),
-    panel.grid.major.y = element_line(color = 'grey70', linetype = "dotted"),
+    panel.grid.major.y = element_line(color = 'grey70', linetype = 'dotted'),
     panel.grid.minor = element_blank(),
     plot.caption     = element_text(size = 12, hjust = 0.5),
     plot.title       = element_text(size = 12, hjust = 0.5),
-    text             = element_text(family = "sans-serif", color = 'grey20'))
+    plot.margin      = unit(c(t = 0, r = 0.5, b = 0, l = 0.5), 'cm'),
+    text             = element_text(family = 'sans-serif', color = 'grey20'))
 
 ## export
-ggsave('output/figures/schfcs_with_mimiiwg-fair_pairing.svg', width = 9, height = 11)
+ggsave('output/figures/Extended Data Figure 2.pdf', 
+       width  = 180, 
+       height = 215,
+       units  = 'mm')
+
+## end of script, have a great day.

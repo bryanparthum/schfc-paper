@@ -24,7 +24,7 @@ font_add_google("Quattrocento Sans", "sans-serif")
 showtext_auto()
 
 ## colorblind friendly palette from http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/
-colors = c("#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442", "#000000", "#0072B2", "#D55E00", "#999999") 
+colors = c("#000000", "#56B4E9", "#E69F00", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#999999")
 
 ## function to summarize scghgs
 summarise_scghg <- function(x) {
@@ -53,7 +53,7 @@ read_iwg <- function(x) {
     mutate(gas   = stri_split(stri_split(filename, fixed = '-')[[1]][2],  fixed = '_')[[1]][1],
            scghg = case_when(stri_split(stri_split(filename, fixed = '-')[[1]][2],  fixed = '_')[[1]][1] != 'CO2' ~ scghg/1e3,
                              T ~ scghg),
-           model = paste0('MimiIWG-', toupper(str_remove(stri_split(stri_split(filename, fixed = '-')[[1]][2],  fixed = '_')[[1]][2], '.parquet'))))
+           model = 'MimiIWG')
 }
 
 ## function to prepare mimigive schfcs
@@ -87,7 +87,7 @@ data =
 
 ## arrange order
 data %<>% 
-  mutate(model = fct_relevel(model, 'MimiGIVE', 'MimiIWG-PAGE', 'MimiIWG-DICE', 'MimiIWG-FUND'),
+  mutate(model = fct_relevel(model, 'MimiGIVE', 'MimiIWG'),
          gas   = fct_relevel(gas,'HFC23', 'HFC32', 'HFC125', 'HFC134a', 'HFC143a', 'HFC152a', 'HFC227ea', 'HFC236fa', 'HFC245fa', 'HFC365mfc', 'HFC4310mee', 'CO2'))
 
 ## specify labels
@@ -117,17 +117,19 @@ data %>%
                      limits = c(2020, 2100),
                      labels = c(2020, '', '', '', 2060, '', '', '', 2100)) +
   scale_y_continuous(breaks = pretty_breaks(n = 5)) +
-  scale_color_manual(values = colors) +
-  scale_fill_manual(values = colors) +
+  scale_color_manual(values = c(colors[4], colors[3])) +
+  scale_fill_manual(values = c(colors[4], colors[3])) +
+  annotation_custom(
+    grob = grid::rectGrob(gp = grid::gpar(col = NA, fill = "white")),
+    xmin = 2100
+  ) +
   labs(x        = "Emissions Year",
        y        = 'The Social Cost of Hydrofluorocarbons \n(SC-HFCs are in thousands, 2020USD per tonne)',
        color    = '',
        linetype = '') +
   theme_minimal() +
   theme(
-    # legend.position = c(0.93, 0.07),
     legend.position = 'bottom',
-    # legend.justification = c(1, 0),
     legend.title     = element_text(size = 14, color = 'grey20'),
     legend.text      = element_text(size = 16, color = 'grey20'),
     legend.key.size  = unit(1, 'cm'),
@@ -142,7 +144,13 @@ data %>%
     panel.grid.minor = element_blank(),
     plot.caption     = element_text(size = 12, hjust = 0.5),
     plot.title       = element_text(size = 12, hjust = 0.5),
+    plot.margin      = unit(c(t = 0, r = 0.5, b = 0, l = 0.5), 'cm'),
     text             = element_text(family = "sans-serif", color = 'grey20'))
 
 ## export
-ggsave('output/figures/schfcs_by_iam.svg', width = 9, height = 11)
+ggsave('output/figures/Figure 2.pdf', 
+       width  = 180, 
+       height = 215,
+       units  = 'mm')
+
+## end of script, have a great day.

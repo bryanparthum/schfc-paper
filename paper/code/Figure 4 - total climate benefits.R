@@ -225,16 +225,16 @@ total_benefits %>%
 total_benefits %>% 
   filter(discount.rate %in% c('2.0% Ramsey', '3%')) %>% 
   ggplot() + 
-  facet_wrap(~schedule, scales = "free_x") + 
-  geom_bar(aes(x    = factor(model, levels = c("MimiGIVE", "MimiIWG")), 
+  facet_wrap(~schedule, scales = 'free_x') + 
+  geom_bar(aes(x    = factor(model, levels = c('MimiGIVE', 'MimiIWG')), 
                y    = total_discounted_benefit_mean, 
                fill = schedule),
            alpha = 0.8,
-           stat     = "identity", 
-           position = "dodge") +
-  geom_errorbar(aes(x    = factor(model, levels = c("MimiGIVE", "MimiIWG")),
-                    ymin      = total_discounted_benefit_q05,
-                    ymax      = total_discounted_benefit_q95),
+           stat     = 'identity', 
+           position = 'dodge') +
+  geom_errorbar(aes(x    = factor(model, levels = c('MimiGIVE', 'MimiIWG')),
+                    ymin = total_discounted_benefit_q05,
+                    ymax = total_discounted_benefit_q95),
                 color    = 'grey40',
                 linetype = 'dashed',
                 width    = 0.2,
@@ -242,9 +242,12 @@ total_benefits %>%
   geom_text(aes(x      = factor(model, levels = c("MimiGIVE", "MimiIWG")), 
                 y      = total_discounted_benefit_mean, 
                 label  = paste0('$', round(total_discounted_benefit_mean, 2), ' T')),
-            family = "sans-serif", 
+            family = 'sans-serif', 
             color = 'grey20',
             vjust = -2) +
+  scale_y_continuous(limits = c(0, 47),
+                     expand = c(0, 0),
+                     breaks = seq(0, 40, 10)) +
   scale_color_manual(values = c(colors[4], colors[3])) +
   scale_fill_manual(values = c(colors[4], colors[3])) +
   labs(x = '',
@@ -260,14 +263,20 @@ total_benefits %>%
     axis.line.x      = element_line(color = "black"),
     axis.ticks.x     = element_blank(),
     strip.text.x     = element_text(size = 13), 
-    strip.background = element_rect(color="black",
-                                    fill="white"),
+    strip.background = element_rect(color = 'black',
+                                    fill  = 'white'),
     panel.grid.major.x = element_blank(),
-    panel.grid.major.y = element_line(color = 'grey70', linetype = "dotted"),
+    panel.grid.major.y = element_line(color = 'grey70', linetype = 'dotted'),
     panel.grid.minor = element_blank(),
     plot.caption     = element_text(size = 14, hjust = 0.5),
     plot.title       = element_text(size = 14, hjust = 0.5),
-    text             = element_text(family = "sans-serif", color = 'grey20'))
+    plot.margin      = unit(c(t = 0.1, r = 0.1, b = 0.1, l = 0.1), 'cm'),
+    text             = element_text(family = 'sans-serif', color = 'grey20'))
 
 ## export
-ggsave("output/figures/total_discounted_benefits_with_uncertainty.svg", width = 9, height = 6)
+ggsave('output/figures/Figure 4.pdf', 
+       width  = 180, 
+       height = 120,
+       units  = 'mm')
+
+## end of script, have a great day.

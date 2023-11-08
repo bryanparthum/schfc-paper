@@ -2,11 +2,11 @@
 #################  library
 ##########################
 
-## Clear workspace
+## clear workspace
 rm(list = ls())
 gc()
 
-## This function will check if a package is installed, and if not, install it
+## this function will check if a package is installed, and if not, install it
 list.of.packages <- c('magrittr','tidyverse',
                       'stringi',
                       'arrow',
@@ -158,7 +158,7 @@ for (mod in c('*fund', '*dice', '*page')) {
   dice_co2_pulse_size = 1e3          ## in MtC, converted from a pulse of 1GtC 
   fund_co2_pulse_size = 10 * 12/44   ## in MtC, converted from a pulse of 10 MtCO2
   page_co2_pulse_size = 1e5 * 12/44  ## in MtC, converted from a pulse of 1e5 MtCO2
-
+  
   ## loop through MimiIWG    
   for (i in 1:length(files_iwg_1)){
     temp =
@@ -241,7 +241,7 @@ data$gas <- factor(data$gas,
 data %>% 
   ggplot() +
   facet_wrap(~gas, scales = 'free', ncol = 3, labeller = label_parsed) +
-  geom_line(aes(x = year, y = mean, color = iam, linetype = iam), size = 0.6) +
+  geom_line(aes(x = year, y = mean, color = iam, linetype = iam), linewidth = 0.6) +
   geom_ribbon(aes(x = year, ymin = q05, ymax = q95, fill = iam), color = NA, linetype = 'dotted', alpha = 0.1, show.legend = F) +
   annotation_custom(
     grob = grid::rectGrob(gp = grid::gpar(col = NA, fill = "white")),
@@ -260,26 +260,29 @@ data %>%
        group     = '',
        fill      = '') +
   theme_minimal() + 
-  theme(legend.position = 'bottom',
-        legend.title     = element_text(size = 14, color = 'grey20'),
-        legend.text      = element_text(size = 16, color = 'grey20'),
-        legend.key.size  = unit(1, 'cm'),
-        legend.margin    = margin(0, 0, 0, 0),
-        axis.title       = element_text(size = 12),
-        axis.text.x      = element_text(size = 10, angle = -45, vjust = -0.5, hjust = 0.65),
-        axis.text.y      = element_text(size = 10),
-        axis.line.x      = element_line(color = "black"),
-        axis.ticks.x     = element_line(color = "black", linewidth = 1),
-        strip.text       = element_text(color = 'grey20', size = 13, face = "bold"), 
-        panel.grid.major.x = element_blank(),
-        panel.grid.major.y = element_line(color='grey70', linetype="dotted"),
-        panel.grid.minor = element_blank(),
-        plot.caption     = element_text(size = 11, hjust = 0.5),
-        plot.title       = element_text(size = 14, hjust = 0.5),
-        text             = element_text(family = "sans-serif", color = 'grey20')) +
-  guides(color = guide_legend(nrow = 1)) 
+  theme(
+    legend.position = 'bottom',
+    legend.title     = element_text(size = 14, color = 'grey20'),
+    legend.text      = element_text(size = 12, color = 'grey20'),
+    legend.key.size  = unit(1, 'cm'),
+    legend.margin    = margin(0, 75, 0, 0),
+    axis.title       = element_text(size = 12),
+    axis.text        = element_text(size = 12),
+    axis.line.x      = element_line(color = "black"),
+    axis.ticks.x     = element_line(color = "black", size = 1),
+    strip.text.x     = element_text(size = 13, face = 'bold', family = 'sans-serif', color = 'grey20'), 
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(color = 'grey70', linetype = 'dotted'),
+    panel.grid.minor = element_blank(),
+    plot.caption     = element_text(size = 12, hjust = 0.5),
+    plot.title       = element_text(size = 12, hjust = 0.5),
+    plot.margin      = unit(c(t = 0, r = 0.5, b = 0, l = 0.5), 'cm'),
+    text             = element_text(family = 'sans-serif', color = 'grey20'))
 
 ## export
-ggsave('output/figures/temp_anomaly.svg', width = 9, height = 12)
+ggsave('output/figures/Figure 3.pdf', 
+       width  = 180, 
+       height = 215,
+       units  = 'mm')
 
 ## end of script, have a great day.

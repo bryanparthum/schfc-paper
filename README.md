@@ -1,6 +1,6 @@
-# The Social Costs of Hydrofluorocarbons and the Benefits from Their Expedited Phasedown
+# The Social Costs of Hydrofluorocarbons and the Climate Benefits from Their Expedited Phasedown
 
-This repo contains data and code for Tan, Rennels, and Parthum (2023), "The Social Costs of Hydrofluorocarbons and the Benefits from Their Expedited Phasedown". 
+This repo contains data and code for Tan, Rennels, and Parthum (2023), "The Social Costs of Hydrofluorocarbons and the Climate Benefits from Their Expedited Phasedown". 
 
 > **Abstract:** 
 > Hydrofluorocarbons are a potent greenhouse gas, yet there remains a lack of quantitative estimates of their social cost. The present study addresses this gap by directly calculating the social cost of hydrofluorocarbons (SC-HFCs) using perturbations of exogenous inputs to integrated assessment models. We first develop a set of direct estimates of the SC-HFCs using methods currently adopted by the United States Government, and then derive updated estimates that incorporate recent advances in climate science and economics. We compare our estimates with commonly used social cost approximations based on global warming potentials to show that the latter is a poor proxy for direct calculation of hydrofluorocarbon emissions impacts using IAMs. Applying our SC-HFCs to the Kigali Amendment, a global agreement to phase down HFCs, we estimate that it provides $37 trillion (2020USD) in climate benefits over its lifetime. Expediting the phasedown could increase the estimated climate benefits to $41 trillion (2020USD).
