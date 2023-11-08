@@ -1,0 +1,17 @@
+cff-version: 1.0.1-ncc-publication
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Parthum"
+  given-names: "Bryan"
+  orcid: "https://orcid.org/0000-0002-9996-2183"
+- family-names: "Rennels"
+  given-names: "Lisa"
+  orcid: "https://orcid.org/0000-0002-5307-9336"
+- family-names: "Tan"
+  given-names: "Tammy"
+  orcid: "https://orcid.org/0000-0002-3236-5421"
+title: "Replication Data and Code for The Social Costs of Hydrofluorocarbons and the Climate Benefits from Their Expedited Phasedown"
+version: 1.0.1-ncc-publication
+doi: 10.5281/zenodo.10081240
+date-released: 2023-11-07
+url: "https://github.com/bryanparthum/schfc-paper"
