@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/612332289.svg)](https://zenodo.org/doi/10.5281/zenodo.10081240)
+
 # The Social Costs of Hydrofluorocarbons and the Climate Benefits from Their Expedited Phasedown
 
 This repo contains data and code for Tan, Rennels, and Parthum (2023), "The Social Costs of Hydrofluorocarbons and the Climate Benefits from Their Expedited Phasedown". 
