@@ -51,7 +51,7 @@ save_list =
 ######################################
 
 ## add procs 
-addprocs(12);
+addprocs(1);
 
 ## distribute packages
 @everywhere using Pkg;

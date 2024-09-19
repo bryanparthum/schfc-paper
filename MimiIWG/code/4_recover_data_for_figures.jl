@@ -39,7 +39,7 @@ discount_rates = [0.03];
 ######################################
 
 ## add procs 
-addprocs(36);
+addprocs(1);
 
 ## distribute packages
 @everywhere using Pkg;

@@ -50,7 +50,7 @@ pricelevel_2005_to_2020 = 113.784/87.504;
 ######################################
 
 ## add procs 
-addprocs(54);
+addprocs(1);
 
 ## distribute packages
 @everywhere using Pkg;
