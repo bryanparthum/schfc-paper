@@ -52,9 +52,9 @@ version = "0.2.6"
 
 [[Bzip2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "19a35467a82e236ff51bc17a3a44b69ef35185a2"
+git-tree-sha1 = "9e2a6b69137e6969bab0152632dcb3bc108c8bdd"
 uuid = "6e34b625-4abd-537c-b88f-471c36dfa7a0"
-version = "1.0.8+0"
+version = "1.0.8+1"
 
 [[CEnum]]
 git-tree-sha1 = "eb4cb44a499229b3b8426dcfb5dd85333951ff90"
@@ -761,8 +761,8 @@ version = "1.0.1-DEV"
 
 [[MimiGIVE]]
 deps = ["CSVFiles", "DataFrames", "Dates", "DelimitedFiles", "Distributions", "Interpolations", "JSON", "LinearAlgebra", "Mimi", "MimiBRICK", "MimiCIAM", "MimiFAIRv1_6_2", "MimiMooreEtAlAgricultureImpacts", "MimiRFFSPs", "MimiSSPs", "Mimi_NAS_pH", "NetCDF", "PDMats", "Query", "Random", "StatsBase", "XLSX"]
-git-tree-sha1 = "097fee678dce0627d7240825dbb8cfeb081cc475"
-repo-rev = "add-hfcs"
+git-tree-sha1 = "10f271f64b753a2c2b74d344dec9efda10720d4d"
+repo-rev = "main"
 repo-url = "https://github.com/lrennels/MimiGIVE.jl.git"
 uuid = "08b927d4-7a58-4cf8-85d0-bad32a16dfbc"
 version = "1.0.1-DEV"
@@ -1558,9 +1558,9 @@ version = "2.0.2+0"
 
 [[libpng_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Zlib_jll"]
-git-tree-sha1 = "94d180a6d2b5e55e447e2d27a29ed04fe79eb30c"
+git-tree-sha1 = "f7c281e9c61905521993a987d38b5ab1d4b53bef"
 uuid = "b53b4c65-9356-5827-b1ea-8c7a1a84506f"
-version = "1.6.38+0"
+version = "1.6.38+1"
 
 [[libsodium_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1570,9 +1570,9 @@ version = "1.0.20+0"
 
 [[libvorbis_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Ogg_jll", "Pkg"]
-git-tree-sha1 = "b910cb81ef3fe6e78bf6acee440bda86fd6ae00c"
+git-tree-sha1 = "490376214c4721cdaca654041f635213c6165cb3"
 uuid = "f27f6e37-5d2b-51aa-960f-b287f2bc3b7a"
-version = "1.3.7+1"
+version = "1.3.7+2"
 
 [[nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1602,6 +1602,6 @@ version = "3.5.0+0"
 
 [[xkbcommon_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Wayland_jll", "Wayland_protocols_jll", "Xorg_libxcb_jll", "Xorg_xkeyboard_config_jll"]
-git-tree-sha1 = "9ebfc140cc56e8c2156a15ceac2f0302e327ac0a"
+git-tree-sha1 = "9c304562909ab2bab0262639bd4f444d7bc2be37"
 uuid = "d8fb68d0-12a3-5cfd-a85a-d49703b185fd"
-version = "1.4.1+0"
+version = "1.4.1+1"
