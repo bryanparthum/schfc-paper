@@ -39,7 +39,8 @@ discount_rates = [0.03];
 ######################################
 
 ## add procs 
-addprocs(36);
+# addprocs(36);  ## 36 is the optimal number of processors for the given combination of HFCs and pulse years. However, we have made the default to be 1 processor to avoid accidentally overloading a user's machine.
+addprocs(1);
 
 ## distribute packages
 @everywhere using Pkg;

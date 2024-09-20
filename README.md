@@ -8,7 +8,20 @@ This repo contains data and code for Tan, Rennels, and Parthum (2023), "The Soci
 > Hydrofluorocarbons are a potent greenhouse gas, yet there remains a lack of quantitative estimates of their social cost. The present study addresses this gap by directly calculating the social cost of hydrofluorocarbons (SC-HFCs) using perturbations of exogenous inputs to integrated assessment models. We first develop a set of direct estimates of the SC-HFCs using methods currently adopted by the United States Government, and then derive updated estimates that incorporate recent advances in climate science and economics. We compare our estimates with commonly used social cost approximations based on global warming potentials to show that the latter is a poor proxy for direct calculation of hydrofluorocarbon emissions impacts using IAMs. Applying our SC-HFCs to the Kigali Amendment, a global agreement to phase down HFCs, we estimate that it provides $37 trillion (2020USD) in climate benefits over its lifetime. Expediting the phasedown could increase the estimated climate benefits to $41 trillion (2020USD).
 
 ## Requirements
-1. *Julia* is free and available for download [here](https://julialang.org/). Estimation of the SC-HFCs for the MimiGIVE and MimiIWG damage modules was performed on Julia 1.8. While newer versions of *Julia* are compatible with all the code (e.g. 1.9), the random number generators were updated and results might not be identical due to random differences in the random parameters underlying the Monte Carlo runs of MimiGIVE and MimiIWG. Install *Julia* and ensure that it can be invoked (ran) from where the replication repository is to be cloned ("in your path"). 
+1. *Julia* is free and available for download [here](https://julialang.org/). 
+
+- Estimation of the SC-HFCs for the MimiGIVE and MimiIWG damage modules was performed on **Julia 1.6** (v1.6.3). While newer (minor) versions of *Julia* are compatible with all the code (e.g. 1.7, 1.8, ...), the random number generators were updated and results might not be identical due to random differences in the random parameters underlying the Monte Carlo runs of MimiGIVE and MimiIWG. Install *Julia* and ensure that it can be invoked (ran) from where the replication repository is to be cloned ("in your path"). 
+
+- Estimation of the SC-HFCs for the MimiIWG_FAIRv162 (sensitivity analysis) damage module was performed on **Julia 1.8** (v1.8.5). While newer (minor) versions of *Julia* are compatible with all the code (e.g. 1.9, 1.10 ...), the random number generators were updated and results might not be identical due to random differences in the random parameters underlying the Monte Carlo runs of MimiGIVE and MimiIWG. Install *Julia* and ensure that it can be invoked (ran) from where the replication repository is to be cloned ("in your path").
+
+*Tip*: Julia ships with the Julia version manager [Juliaup](https://github.com/JuliaLang/juliaup) which is useful in this case for handling Julia versions. To add the option of running Julia version 1.6 to your machine type the following in the terminal.
+```
+juliaup add 1.6
+```
+To run code using a specific version, as shown below in the replication code, you may indicate a version using `+version` ie.
+```
+julia +1.6 myfile.jl
+```
 
 2. *R* is free and available for download [here](https://www.r-project.org/). The *RStudio* integrated development environment is useful for replication, it is free and available for download [here](https://www.rstudio.com/products/rstudio/). *R* is used to collect the estimates from each damage module and create a table of annual SC-HFCs. 
 
@@ -51,20 +64,22 @@ The replication script `1_estimate_scghgs.jl` contains several important paramet
 Once the parameters have been established by the user, on the command line, type: 
 
 ```
-julia 1_estimate_give_schfc.jl
+julia +1.6 1_estimate_give_schfc.jl
 ```
+
+Importantly, note that the `+1.6` above will load the correct Julia version for this code. This can be removed and full code functionality will be retained in any 1.X version of Julia, but possible changes to random number generators may prevent identical results generation. See bullet 1 of the [Requirements](#requirements) section above. As stated there, you may need `juliaup add 1.6` to download the proper Julia version.
 
 **Note:** Estimation time for MimiGIVE varies by machine. Using 10,000 Monte Carlo draws for each `gas + emissions year` pair (one pair per processor) takes approximate 10 processor hours to run. With 12 gases and 9 emissions years, the replication of MimiGIVE will take approximately 1,080 processor hours. Users should plan to allocate 5GB of memory per processor. 
 
 ## MimiIWG 
-Replicating the the SC-HFCs from `MimiIWG` can be done in the same way as MimiGIVE as outlined above in [Running the Scripts](#running-the-scripts). Instead of navigating to the `GIVE` directory, navigate to the `MimiIWG` directory (in the terminal, the same was as instructed for GIVE) and execute with the replication script: `1_estimate_scghgs.jl`. 
+Replicating the the SC-HFCs from `MimiIWG` can be done in the same way as MimiGIVE as outlined above in [Running the Model](#running-the-model). Instead of navigating to the `GIVE` directory, navigate to the `MimiIWG` directory (in the terminal, the same was as instructed for GIVE) and execute with the replication script: `1_estimate_scghgs.jl`. 
 
 **Note:** Estimation time for MimiIWG varies by the integrated assessment model (IAM). Using 10,000 Monte Carlo draws for each `gas + IAM` pair (one pair per processor) takes approximately 4 hours for DICE, 8 hours for FUND, and 10 hours for PAGE (varies by machine).  In general, running all 12 gases and 3 IAM pairs (36 in total) will take approximately 1,250 processor hours. Users should plan to allocate 4GB of memory per processor. 
 
 ## MimiIWG_FAIRv162
-Replicating the the SC-HFCs from `MimiIWG` paired with the `FAIRv1.6.2` climate model can be done in the same way as MimiGIVE as outlined above in [Running the Scripts](#running-the-scripts). Instead of navigating to the `GIVE` directory, navigate to the `MimiIWG_FAIRv162` directory (in the terminal, the same was as instructed for GIVE) and execute with the replication script: `1_estimate_scghgs.jl`. Again this is a requested sensitivity analysis -- not a main result -- see paper for modeling choices and assumptions.
+Replicating the the SC-HFCs from `MimiIWG` paired with the `FAIRv1.6.2` climate model can be done in the same way as MimiGIVE as outlined above in [Running the Model](#running-the-model). Instead of navigating to the `GIVE` directory, navigate to the `MimiIWG_FAIRv162` directory (in the terminal, the same was as instructed for GIVE) and execute with the replication script: `1_estimate_scghgs.jl` **and use Julia version 1.8 with `+1.8`**. Again this is a requested sensitivity analysis -- not a main result -- see paper for modeling choices and assumptions.
 
-**Note:** Estimation time for MimiIWG varies by the integrated assessment model (IAM). Using 10,000 Monte Carlo draws for each `gas + IAM` pair (one pair per processor) takes approximately 4 hours for DICE, 8 hours for FUND, and 10 hours for PAGE (varies by machine).  In general, running all 12 gases and 3 IAM pairs (36 in total) will take approximately 1,250 processor hours. Users should plan to allocate 4GB of memory per processor. 
+**Note:** Estimation time for MimiIWG_FAIRv162 varies by the integrated assessment model (IAM). Using 10,000 Monte Carlo draws for each `gas + IAM` pair (one pair per processor) takes approximately 4 hours for DICE, 8 hours for FUND, and 10 hours for PAGE (varies by machine).  In general, running all 12 gases and 3 IAM pairs (36 in total) will take approximately 1,250 processor hours. Users should plan to allocate 4GB of memory per processor. 
 
 ## Processing Model Outputs and Producing the Annual SC-HFCs
 While this repository already includes all estimates resulting from running the models outlined above, located in the `output` subdirectory under each model's folder, a user can replicate the cleaning process by using the *R* code provided in each model's `code` subdirectory. Begin by navigating to the `paper` directory in the file explorer or equivalent. Open the *R* project under each model's subdirectory (i.e., `MimiGIVE.Rproj` and `MimiIWG.Rproj`). Then, navigate to the `code` subdirectory and open `2_process_scghgs.R` for MimiGIVE. For MimiIWG and MimiIWG_FAIRv162, first open `2_process_page_discontinuities.R` and then `3_process_scghgs.R`. All remaining steps are documented in the code. 
