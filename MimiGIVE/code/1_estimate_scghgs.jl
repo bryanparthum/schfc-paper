@@ -50,6 +50,7 @@ pricelevel_2005_to_2020 = 113.784/87.504;
 ######################################
 
 ## add procs 
+# addprocs(54);  ## 54 is the optimal number of processors for the given combination of HFCs and pulse years. However, we have made the default to be 1 processor to avoid accidentally overloading a user's machine.
 addprocs(1);
 
 ## distribute packages
